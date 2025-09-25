@@ -247,90 +247,96 @@
     <div id="footer">© 2025 Akshun Chaure. All rights reserved. 🌹</div>
 
     <script>
-      const chatbox = document.getElementById("chatbox");
-      const messageInput = document.getElementById("message");
-      const sendButton = document.getElementById("send");
-      const moodSelect = document.getElementById("mood");
+  const chatbox = document.getElementById("chatbox");
+  const messageInput = document.getElementById("message");
+  const sendButton = document.getElementById("send");
+  const moodSelect = document.getElementById("mood");
 
-      function scrollChat() {
-        chatbox.scrollTop = chatbox.scrollHeight;
-      }
+  function scrollChat() {
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
 
-      function createMessage(content, type) {
-        const msg = document.createElement("div");
-        msg.classList.add("message", type);
-        msg.innerHTML = content;
-        chatbox.appendChild(msg);
-        scrollChat();
-      }
+  function createMessage(content, type) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", type);
+    msg.innerHTML = content;
+    chatbox.appendChild(msg);
+    scrollChat();
+  }
 
-      async function sendMessage() {
-        const msg = messageInput.value.trim();
-        if (!msg) return;
+  // Base64 encoded default birthday wish
+  const defaultWishBase64 = "SGFwcHkgQmlydGhkYXkgQW5zaGlrYSEg8J+MuCBNYXkgeW91ciBkYXkgYmUgc3ByaW5rbGVkIHdpdGggam95IGxpa2UgY29uZmV0dGksIGFuZCB5b3VyIGhlYXJ0IGZpbGxlZCB3aXRoIHN1bnNoaW5lIGFzIGJyaWdodCBhcyB5b3VyIHNtaWxlLiBXaXNoaW5nIHlvdSB0aGUgc3dlZXRlc3QgYWR2ZW50dXJlcyB0b2RheSBhbmQgYWxsIHllYXIgbG9uZyE=";
+  const defaultWish = atob(defaultWishBase64);
 
-        createMessage(msg, "user");
+  async function sendMessage() {
+    const msg = messageInput.value.trim();
+    if (!msg) return;
 
-        const mood = moodSelect.value;
-        createMessage("💌 Crafting a " + mood + " wish for Anshika...", "bot");
+    createMessage(msg, "user");
 
-        try {
-          // Replace with your n8n webhook
-          const response = await fetch(
-            "https://n8n.srv1004517.hstgr.cloud/webhook/f1bdcf8c-6ebc-4830-be56-1d31e8a57b19",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ message: msg, mood: mood }),
-            }
-          );
+    const mood = moodSelect.value;
+    createMessage("💌 Crafting a " + mood + " wish for Anshika...", "bot");
 
-          const data = await response.json();
-          const botResponse = data.response || "🎂 Happy Birthday Anshika!";
-
-          const lastBot = chatbox.querySelector(".bot:last-child");
-          if (lastBot) lastBot.remove();
-
-          createMessage(botResponse.replace(/\n/g, "<br>"), "bot");
-        } catch (err) {
-          const lastBot = chatbox.querySelector(".bot:last-child");
-          if (lastBot) lastBot.remove();
-          createMessage("💔 Connection failed… please try again.", "bot");
+    try {
+      // Replace with your n8n webhook
+      const response = await fetch(
+        "https://n8n.srv1004517.hstgr.cloud/webhook/f1bdcf8c-6ebc-4830-be56-1d31e8a57b19",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: msg, mood: mood }),
         }
+      );
 
-        messageInput.value = "";
+      const data = await response.json();
+      const botResponse = data.response && data.response.trim() !== "" ? data.response : defaultWish;
+
+      const lastBot = chatbox.querySelector(".bot:last-child");
+      if (lastBot) lastBot.remove();
+
+      createMessage(botResponse.replace(/\n/g, "<br>"), "bot");
+    } catch (err) {
+      const lastBot = chatbox.querySelector(".bot:last-child");
+      if (lastBot) lastBot.remove();
+      createMessage(defaultWish, "bot");
+    }
+
+    messageInput.value = "";
+  }
+
+  sendButton.addEventListener("click", sendMessage);
+  messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  // Floating hearts effect
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.style.left = Math.random() * window.innerWidth + "px";
+    heart.style.fontSize = 12 + Math.random() * 18 + "px";
+    heart.style.color = `rgba(255, ${50 + Math.random() * 50}, ${
+      50 + Math.random() * 50
+    }, ${0.6 + Math.random() * 0.4})`;
+    heart.textContent = "💖";
+    document.body.appendChild(heart);
+    heart.animate(
+      [
+        { transform: "translateY(0)" },
+        { transform: "translateY(-120px)", opacity: 0 },
+      ],
+      {
+        duration: 3000,
+        iterations: 1,
       }
+    );
+    setTimeout(() => heart.remove(), 3000);
+  }, 500);
+</script>
 
-      sendButton.addEventListener("click", sendMessage);
-      messageInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") sendMessage();
-      });
-
-      // Floating hearts effect
-      setInterval(() => {
-        const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.style.left = Math.random() * window.innerWidth + "px";
-        heart.style.fontSize = 12 + Math.random() * 18 + "px";
-        heart.style.color = `rgba(255, ${50 + Math.random() * 50}, ${
-          50 + Math.random() * 50
-        }, ${0.6 + Math.random() * 0.4})`;
-        heart.textContent = "💖";
-        document.body.appendChild(heart);
-        heart.animate(
-          [
-            { transform: "translateY(0)" },
-            { transform: "translateY(-120px)", opacity: 0 },
-          ],
-          {
-            duration: 3000,
-            iterations: 1,
-          }
-        );
-        setTimeout(() => heart.remove(), 3000);
-      }, 500);
-    </script>
   </body>
 </html>
+
 
 
 
