@@ -59,7 +59,7 @@
       border-radius: 50%;
       margin-bottom: 10px;
       border: 3px solid #ff4d6d;
-      box-shadow: 0 4px 15px rgba(255,0,60,0.6);
+      box-shadow: 0 4px 15px rgba(255, 0, 60, 0.6);
     }
 
     #mood-area {
@@ -103,14 +103,14 @@
       color: #fff;
       align-self: flex-end;
       border-bottom-right-radius: 5px;
-      box-shadow: 0 4px 12px rgba(255,0,80,0.5);
+      box-shadow: 0 4px 12px rgba(255, 0, 80, 0.5);
     }
     .message.bot {
-      background: rgba(255,200,220,0.85);
+      background: rgba(255, 200, 220, 0.85);
       color: #330011;
       align-self: flex-start;
       border-bottom-left-radius: 5px;
-      box-shadow: 0 4px 12px rgba(255,0,80,0.2);
+      box-shadow: 0 4px 12px rgba(255, 0, 80, 0.2);
       font-style: italic;
     }
 
@@ -118,7 +118,7 @@
       display: flex;
       border-top: 1px solid rgba(255,255,255,0.3);
       padding: 12px 16px;
-      background: rgba(255,0,60,0.2);
+      background: rgba(255, 0, 60, 0.2);
       backdrop-filter: blur(12px);
     }
     #message {
@@ -128,7 +128,7 @@
       padding: 10px 14px;
       font-size: 15px;
       outline: none;
-      background: rgba(255,230,240,0.85);
+      background: rgba(255, 230, 240, 0.85);
       color: #330011;
     }
     #send {
@@ -144,29 +144,6 @@
       box-shadow: 0 4px 10px rgba(255,0,80,0.5);
     }
     #send:hover { background: #cc0033; transform: scale(1.08); }
-
-    #footer {
-      text-align: center;
-      padding: 10px;
-      font-size: 13px;
-      background: rgba(255,0,60,0.25);
-      border-top: 1px solid rgba(255,255,255,0.3);
-      font-style: italic;
-      color: #fff0f5;
-    }
-
-    .heart {
-      position: absolute;
-      font-size: 20px;
-      animation: floatUp 4s linear infinite;
-      pointer-events: none;
-      opacity: 0.7;
-    }
-    @keyframes floatUp {
-      0% { transform: translateY(0) scale(1); opacity: 0.7; }
-      50% { transform: translateY(-50px) scale(1.2); opacity: 1; }
-      100% { transform: translateY(-120px) scale(1); opacity: 0; }
-    }
 
     @media screen and (max-width: 480px) {
       .message { font-size: 13px; max-width: 85%; }
@@ -184,7 +161,8 @@
 
   <div id="intro">
     <img src="anshika.jpg" alt="Anshika" />
-    Type your birthday wish request below, and let the AI create heartfelt messages for <strong>Anshika</strong>!
+    Type your birthday wish request below, and let the AI create heartfelt
+    messages for <strong>Anshika</strong>!
   </div>
 
   <div id="mood-area">
@@ -203,10 +181,6 @@
     <button id="send">Send</button>
   </div>
 
-  <div id="footer">
-    © 2025 Akshun Chaure. All rights reserved. 🌹
-  </div>
-
   <script>
     const chatbox = document.getElementById("chatbox");
     const messageInput = document.getElementById("message");
@@ -215,22 +189,28 @@
 
     function scrollChat() { chatbox.scrollTop = chatbox.scrollHeight; }
 
+    function decodeBase64(str) {
+      try { return decodeURIComponent(escape(window.atob(str))); }
+      catch(e){ return str; }
+    }
+
     function createMessage(content, type) {
       const msg = document.createElement("div");
       msg.classList.add("message", type);
-      msg.innerHTML = content;
+      msg.innerHTML = content.replace(/\n/g, "<br>");
       chatbox.appendChild(msg);
       scrollChat();
     }
 
-    const defaultWish = "🎂 Happy Birthday Anshika! May your day be filled with love, laughter, and joy!";
-
     async function sendMessage() {
       const msg = messageInput.value.trim();
-      if (!msg) return;
+      if(!msg) return;
 
       createMessage(msg, "user");
-      createMessage("💌 Crafting a " + moodSelect.value + " wish for Anshika...", "bot");
+
+      const mood = moodSelect.value;
+      const typing = "💌 Crafting a " + mood + " wish for Anshika...";
+      createMessage(typing, "bot");
 
       try {
         const response = await fetch(
@@ -238,20 +218,23 @@
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: msg, mood: moodSelect.value }),
+            body: JSON.stringify({ message: msg, mood: mood }),
           }
         );
         const data = await response.json();
 
+        // Decode Base64
+        const decoded = decodeBase64(data.response || "🎂 Happy Birthday Anshika!");
+
+        // Remove typing indicator
         const lastBot = chatbox.querySelector(".bot:last-child");
         if(lastBot) lastBot.remove();
 
-        const botResponse = data.response || defaultWish;
-        createMessage(botResponse.replace(/\n/g, "<br>"), "bot");
+        createMessage(decoded, "bot");
       } catch (err) {
         const lastBot = chatbox.querySelector(".bot:last-child");
         if(lastBot) lastBot.remove();
-        createMessage(defaultWish, "bot");
+        createMessage("💔 Connection failed… please try again.", "bot");
       }
 
       messageInput.value = "";
@@ -259,19 +242,6 @@
 
     sendButton.addEventListener("click", sendMessage);
     messageInput.addEventListener("keypress", e => { if(e.key === "Enter") sendMessage(); });
-
-    // Floating hearts effect
-    setInterval(() => {
-      const heart = document.createElement("div");
-      heart.className = "heart";
-      heart.style.left = Math.random() * window.innerWidth + "px";
-      heart.style.fontSize = 12 + Math.random() * 18 + "px";
-      heart.style.color = `rgba(255, ${50+Math.random()*50}, ${50+Math.random()*50}, ${0.6+Math.random()*0.4})`;
-      heart.textContent = "💖";
-      document.body.appendChild(heart);
-      heart.animate([{ transform: "translateY(0)" }, { transform: "translateY(-120px)", opacity: 0 }], { duration: 3000, iterations: 1 });
-      setTimeout(() => heart.remove(), 3000);
-    }, 500);
   </script>
 </body>
 </html>
