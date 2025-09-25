@@ -11,12 +11,12 @@
       height: 100%;
       font-family: "Georgia", serif;
       background: linear-gradient(135deg, #ff1a3c, #b3003c, #660022);
-      background-attachment: fixed;
       display: flex;
       flex-direction: column;
       color: #fff0f5;
       overflow-x: hidden;
     }
+
     #chat-header {
       background: linear-gradient(90deg, #ff0033, #cc0033);
       color: #fff;
@@ -41,6 +41,7 @@
       right: 20px;
       font-size: 28px;
     }
+
     #intro {
       text-align: center;
       padding: 16px;
@@ -60,7 +61,11 @@
       border: 3px solid #ff4d6d;
       box-shadow: 0 4px 15px rgba(255,0,60,0.6);
     }
-    #mood-area { text-align: center; margin: 12px 0; }
+
+    #mood-area {
+      text-align: center;
+      margin: 12px 0;
+    }
     #mood-area select {
       font-size: 16px;
       padding: 6px 12px;
@@ -70,6 +75,7 @@
       color: #fff0f5;
       cursor: pointer;
     }
+
     #chatbox {
       flex: 1;
       padding: 20px;
@@ -77,13 +83,14 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
-      background: rgba(255,255,255,0.05);
+      background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
       border-radius: 25px 25px 0 0;
       font-style: italic;
       font-size: 1.1rem;
       line-height: 1.6;
     }
+
     .message {
       max-width: 75%;
       padding: 14px 18px;
@@ -106,6 +113,7 @@
       box-shadow: 0 4px 12px rgba(255,0,80,0.2);
       font-style: italic;
     }
+
     #input-area {
       display: flex;
       border-top: 1px solid rgba(255,255,255,0.3);
@@ -135,10 +143,8 @@
       transition: all 0.3s ease;
       box-shadow: 0 4px 10px rgba(255,0,80,0.5);
     }
-    #send:hover {
-      background: #cc0033;
-      transform: scale(1.08);
-    }
+    #send:hover { background: #cc0033; transform: scale(1.08); }
+
     #footer {
       text-align: center;
       padding: 10px;
@@ -147,6 +153,26 @@
       border-top: 1px solid rgba(255,255,255,0.3);
       font-style: italic;
       color: #fff0f5;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 20px;
+      animation: floatUp 4s linear infinite;
+      pointer-events: none;
+      opacity: 0.7;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 0.7; }
+      50% { transform: translateY(-50px) scale(1.2); opacity: 1; }
+      100% { transform: translateY(-120px) scale(1); opacity: 0; }
+    }
+
+    @media screen and (max-width: 480px) {
+      .message { font-size: 13px; max-width: 85%; }
+      #send { padding: 0 12px; }
+      #message { font-size: 13px; padding: 8px 12px; }
+      #intro { font-size: 14px; padding: 10px 16px; }
     }
   </style>
 </head>
@@ -177,7 +203,9 @@
     <button id="send">Send</button>
   </div>
 
-  <div id="footer">© 2025 Akshun Chaure. All rights reserved. 🌹</div>
+  <div id="footer">
+    © 2025 Akshun Chaure. All rights reserved. 🌹
+  </div>
 
   <script>
     const chatbox = document.getElementById("chatbox");
@@ -195,17 +223,7 @@
       scrollChat();
     }
 
-    // UTF-8 safe Base64 decode inspired by your Shruti code
-    function decodeBase64UTF8(str) {
-      try {
-        return decodeURIComponent(escape(window.atob(str)));
-      } catch (e) {
-        return str;
-      }
-    }
-
-    const defaultWishBase64 = "SGFwcHkgQmlydGhkYXkgQW5zaGlrYSEg8J+MuCBNYXkgeW91ciBkYXkgYmUgc3ByaW5rbGVkIHdpdGggam95IGxpa2UgY29uZmV0dGksIGFuZCB5b3VyIGhlYXJ0IGZpbGxlZCB3aXRoIHN1bnNoaW5lIGFzIGJyaWdodCBhcyB5b3VyIHNtaWxlLiBXaXNoaW5nIHlvdSB0aGUgc3dlZXRlc3QgYWR2ZW50dXJlcyB0b2RheSBhbmQgYWxsIHllYXIgbG9uZyE=";
-    const defaultWish = decodeBase64UTF8(defaultWishBase64);
+    const defaultWish = "🎂 Happy Birthday Anshika! May your day be filled with love, laughter, and joy!";
 
     async function sendMessage() {
       const msg = messageInput.value.trim();
@@ -223,16 +241,16 @@
             body: JSON.stringify({ message: msg, mood: moodSelect.value }),
           }
         );
-
         const data = await response.json();
-        const lastBot = chatbox.querySelector(".bot:last-child");
-        if (lastBot) lastBot.remove();
 
-        const botResponse = decodeBase64UTF8(data.response || "") || defaultWish;
+        const lastBot = chatbox.querySelector(".bot:last-child");
+        if(lastBot) lastBot.remove();
+
+        const botResponse = data.response || defaultWish;
         createMessage(botResponse.replace(/\n/g, "<br>"), "bot");
       } catch (err) {
         const lastBot = chatbox.querySelector(".bot:last-child");
-        if (lastBot) lastBot.remove();
+        if(lastBot) lastBot.remove();
         createMessage(defaultWish, "bot");
       }
 
@@ -241,6 +259,19 @@
 
     sendButton.addEventListener("click", sendMessage);
     messageInput.addEventListener("keypress", e => { if(e.key === "Enter") sendMessage(); });
+
+    // Floating hearts effect
+    setInterval(() => {
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      heart.style.fontSize = 12 + Math.random() * 18 + "px";
+      heart.style.color = `rgba(255, ${50+Math.random()*50}, ${50+Math.random()*50}, ${0.6+Math.random()*0.4})`;
+      heart.textContent = "💖";
+      document.body.appendChild(heart);
+      heart.animate([{ transform: "translateY(0)" }, { transform: "translateY(-120px)", opacity: 0 }], { duration: 3000, iterations: 1 });
+      setTimeout(() => heart.remove(), 3000);
+    }, 500);
   </script>
 </body>
 </html>
