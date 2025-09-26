@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Birthday Anshika 🎉</title>
+  <title>Happy Birthday Gauri 🎉</title>
   <style>
     body, html {
       margin: 0;
@@ -61,19 +61,11 @@
       border: 3px solid #ff4d6d;
       box-shadow: 0 4px 15px rgba(255, 0, 60, 0.6);
     }
-
-    #mood-area {
-      text-align: center;
-      margin: 12px 0;
-    }
-    #mood-area select {
-      font-size: 16px;
-      padding: 6px 12px;
-      border-radius: 12px;
-      border: 1px solid #ffccd5;
-      background: #b3003c;
-      color: #fff0f5;
-      cursor: pointer;
+    #special-note {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ffe6f2;
+      font-style: italic;
     }
 
     #chatbox {
@@ -155,29 +147,20 @@
 </head>
 <body>
   <div id="chat-header">
-    🎉 Happy Birthday Anshika! 🎉
+    🎉 Happy Birthday Gauri! 🎉
     <span>Developed with love by Akshun Chaure</span>
   </div>
 
   <div id="intro">
-    <img src="anshika.jpg" alt="Anshika" />
+    <img src="gauri.jpg" alt="Gauri" />
     Type your birthday wish request below, and let the AI create heartfelt
-    messages for <strong>Anshika</strong>!
-  </div>
-
-  <div id="mood-area">
-    <label for="mood">Select mood: </label>
-    <select id="mood">
-      <option value="cute">Cute 💕</option>
-      <option value="funny">Funny 😄</option>
-      <option value="romantic">Romantic ❤️</option>
-      <option value="inspirational">Inspirational ✨</option>
-    </select>
+    messages for <strong>Gauri</strong>.
+    <div id="special-note">✨ Gauri, never forget — you will always be special to Akshun. ❤️</div>
   </div>
 
   <div id="chatbox"></div>
   <div id="input-area">
-    <input type="text" id="message" placeholder="Type a word, mood, or short wish..." />
+    <input type="text" id="message" placeholder="Type a word or short wish..." />
     <button id="send">Send</button>
   </div>
 
@@ -185,7 +168,6 @@
     const chatbox = document.getElementById("chatbox");
     const messageInput = document.getElementById("message");
     const sendButton = document.getElementById("send");
-    const moodSelect = document.getElementById("mood");
 
     function scrollChat() { chatbox.scrollTop = chatbox.scrollHeight; }
 
@@ -208,8 +190,7 @@
 
       createMessage(msg, "user");
 
-      const mood = moodSelect.value;
-      const typing = "💌 Crafting a " + mood + " wish for Anshika...";
+      const typing = "💌 Crafting a heartfelt wish for Gauri...";
       createMessage(typing, "bot");
 
       try {
@@ -218,13 +199,13 @@
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: msg, mood: mood }),
+            body: JSON.stringify({ message: msg }),
           }
         );
         const data = await response.json();
 
         // Decode Base64
-        const decoded = decodeBase64(data.response || "🎂 Happy Birthday Anshika!");
+        let decoded = decodeBase64(data.response || "🎂 Happy Birthday Gauri!");
 
         // Remove typing indicator
         const lastBot = chatbox.querySelector(".bot:last-child");
