@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Happy Birthday Gauri 🎉</title>
+  <title>Compliments for Gauri</title>
   <style>
     body, html {
       margin: 0;
@@ -60,12 +60,6 @@
       margin-bottom: 10px;
       border: 3px solid #ff4d6d;
       box-shadow: 0 4px 15px rgba(255, 0, 60, 0.6);
-    }
-    #special-note {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #ffe6f2;
-      font-style: italic;
     }
 
     #chatbox {
@@ -147,20 +141,18 @@
 </head>
 <body>
   <div id="chat-header">
-    🎉 Happy Birthday Gauri! 🎉
+    💖 Compliments for Gauri 💖
     <span>Developed with love by Akshun Chaure</span>
   </div>
 
   <div id="intro">
     <img src="gauri.jpg" alt="Gauri" />
-    Type your birthday wish request below, and let the AI create heartfelt
-    messages for <strong>Gauri</strong>.
-    <div id="special-note">✨ Gauri, never forget — you will always be special to Akshun. ❤️</div>
+    Type something below, and let the AI create heartfelt compliments for <strong>Gauri</strong>!
   </div>
 
   <div id="chatbox"></div>
   <div id="input-area">
-    <input type="text" id="message" placeholder="Type a word or short wish..." />
+    <input type="text" id="message" placeholder="Type a hint (like eyes, smile, style)..." />
     <button id="send">Send</button>
   </div>
 
@@ -190,22 +182,22 @@
 
       createMessage(msg, "user");
 
-      const typing = "💌 Crafting a heartfelt wish for Gauri...";
+      const typing = "✨ Creating a compliment for Gauri...";
       createMessage(typing, "bot");
 
       try {
         const response = await fetch(
-          "https://n8n.srv1004517.hstgr.cloud/webhook/f1bdcf8c-6ebc-4830-be56-1d31e8a57b19",
+          "https://YOUR_N8N_WEBHOOK_URL", // Replace with your actual n8n webhook URL
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: msg }),
+            body: JSON.stringify({ hint: msg }),
           }
         );
         const data = await response.json();
 
         // Decode Base64
-        let decoded = decodeBase64(data.response || "🎂 Happy Birthday Gauri!");
+        const decoded = decodeBase64(data.response || "🌹 You’re wonderful, Gauri!");
 
         // Remove typing indicator
         const lastBot = chatbox.querySelector(".bot:last-child");
