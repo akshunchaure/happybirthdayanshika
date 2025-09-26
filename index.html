@@ -145,14 +145,18 @@
     <span>Developed with love by Akshun Chaure</span>
   </div>
 
-  <div id="intro">
-    <img src="gauri.jpg" alt="Gauri" />
-   Type a hint, and Akshun's AI will send heartfelt compliments to Gauri!
-  <div id="chatbox"></div>
-  <div id="input-area">
-    <input type="text" id="message" placeholder="Type a hint (like eyes, smile, style)..." />
-    <button id="send">Send</button>
-  </div>
+ <div id="intro">
+  <img src="gauri.jpg" alt="Gauri" />
+  Type a hint, and Akshun's AI will send heartfelt compliments to Gauri!
+</div> <!-- Close intro here -->
+
+<div id="chatbox"></div> <!-- Chatbox now outside intro -->
+
+<div id="input-area">
+  <input type="text" id="message" placeholder="Type a hint (like eyes, smile, style)..." />
+  <button id="send">Send</button>
+</div>
+
 
   <script>
     const chatbox = document.getElementById("chatbox");
@@ -216,4 +220,5 @@
   </script>
 </body>
 </html>
+
 
